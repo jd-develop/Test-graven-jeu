@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # coding:utf-8
 import pygame
+from pygame import locals
 import pytmx
 import pyscroll
 from player import Player
@@ -8,14 +9,14 @@ from player import Player
 
 class Game:
     def __init__(self):
-        self.screen = pygame.display.set_mode((800, 600))
+        self.screen = pygame.display.set_mode((800, 600), locals.RESIZABLE)
         pygame.display.set_caption("Pygamon")
 
         # charger la carte
         tmx_data = pytmx.util_pygame.load_pygame("map.tmx")
         map_data = pyscroll.data.TiledMapData(tmx_data)
-        map_layer = pyscroll.orthographic.BufferedRenderer(map_data, self.screen.get_size())
-        map_layer.zoom = 2
+        self.map_layer = pyscroll.orthographic.BufferedRenderer(map_data, self.screen.get_size())
+        self.map_layer.zoom = 2
 
         # générer un joueur
         player_position = tmx_data.get_object_by_id(1)
@@ -29,7 +30,7 @@ class Game:
                 self.walls.append(pygame.Rect(obj.x, obj.y, obj.width, obj.height))
 
         # dessiner le goupe de calques
-        self.group = pyscroll.PyscrollGroup(map_layer=map_layer, default_layer=4)
+        self.group = pyscroll.PyscrollGroup(map_layer=self.map_layer, default_layer=4)
         self.group.add(self.player)
 
         # rect de collision pour entrer dans house1
@@ -58,8 +59,8 @@ class Game:
          # charger la carte
         tmx_data = pytmx.util_pygame.load_pygame("house1.tmx")
         map_data = pyscroll.data.TiledMapData(tmx_data)
-        map_layer = pyscroll.orthographic.BufferedRenderer(map_data, self.screen.get_size())
-        map_layer.zoom = 2
+        self.map_layer = pyscroll.orthographic.BufferedRenderer(map_data, self.screen.get_size())
+        self.map_layer.zoom = 2
 
         # liste de collisions
         self.walls = []
@@ -69,7 +70,7 @@ class Game:
                 self.walls.append(pygame.Rect(obj.x, obj.y, obj.width, obj.height))
 
         # dessiner le goupe de calques
-        self.group = pyscroll.PyscrollGroup(map_layer=map_layer, default_layer=4)
+        self.group = pyscroll.PyscrollGroup(map_layer=self.map_layer, default_layer=4)
         self.group.add(self.player)
 
         # rect de collision pour sortir de house1
@@ -85,8 +86,8 @@ class Game:
          # charger la carte
         tmx_data = pytmx.util_pygame.load_pygame("map.tmx")
         map_data = pyscroll.data.TiledMapData(tmx_data)
-        map_layer = pyscroll.orthographic.BufferedRenderer(map_data, self.screen.get_size())
-        map_layer.zoom = 2
+        self.map_layer = pyscroll.orthographic.BufferedRenderer(map_data, self.screen.get_size())
+        self.map_layer.zoom = 2
 
         # liste de collisions
         self.walls = []
@@ -96,7 +97,7 @@ class Game:
                 self.walls.append(pygame.Rect(obj.x, obj.y, obj.width, obj.height))
 
         # dessiner le goupe de calques
-        self.group = pyscroll.PyscrollGroup(map_layer=map_layer, default_layer=4)
+        self.group = pyscroll.PyscrollGroup(map_layer=self.map_layer, default_layer=4)
         self.group.add(self.player)
 
         # rect de collision pour entrer dans house1
@@ -139,6 +140,14 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+                elif event.type == locals.VIDEORESIZE:
+                    width, height = event.size
+                    if width < 800:
+                        width = 800
+                    if height < 600:
+                        height = 600
+                    self.screen = pygame.display.set_mode((width,height), locals.RESIZABLE)
+                    self.map_layer.set_size(self.screen.get_size())
 
             clock.tick(60)
         
