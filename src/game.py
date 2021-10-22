@@ -4,7 +4,7 @@ import pygame
 from pygame import locals
 import pytmx
 import pyscroll
-from player import Player
+from src.player import Player
 
 
 class Game:
@@ -13,7 +13,7 @@ class Game:
         pygame.display.set_caption("Pygamon")
 
         # charger la carte
-        tmx_data = pytmx.util_pygame.load_pygame("map.tmx")
+        tmx_data = pytmx.util_pygame.load_pygame("maps/map.tmx")
         map_data = pyscroll.data.TiledMapData(tmx_data)
         self.map_layer = pyscroll.orthographic.BufferedRenderer(map_data, self.screen.get_size())
         self.map_layer.zoom = 2
@@ -29,17 +29,18 @@ class Game:
             if obj.type == "collision":
                 self.walls.append(pygame.Rect(obj.x, obj.y, obj.width, obj.height))
 
-        # dessiner le goupe de calques
+        # dessiner le groupe de calques
         self.group = pyscroll.PyscrollGroup(map_layer=self.map_layer, default_layer=4)
         self.group.add(self.player)
 
         # rect de collision pour entrer dans house1
         enter_house1 = tmx_data.get_object_by_name("enter_house1")
         self.enter_house1_rect = pygame.Rect(enter_house1.x, enter_house1.y, enter_house1.width, enter_house1.height)
+        self.exit_house1_rect = None
 
         self.map = "world"
-    
-    def hundle_input(self):
+
+    def handle_input(self):
         pressed = pygame.key.get_pressed()
 
         if pressed[pygame.K_z] or pressed[pygame.K_UP]:
@@ -54,10 +55,10 @@ class Game:
         elif pressed[pygame.K_q] or pressed[pygame.K_LEFT]:
             self.player.change_animation("left")
             self.player.move_left()
-    
+
     def switch_house(self):
-         # charger la carte
-        tmx_data = pytmx.util_pygame.load_pygame("house1.tmx")
+        # charger la carte
+        tmx_data = pytmx.util_pygame.load_pygame("maps/house1.tmx")
         map_data = pyscroll.data.TiledMapData(tmx_data)
         self.map_layer = pyscroll.orthographic.BufferedRenderer(map_data, self.screen.get_size())
         self.map_layer.zoom = 2
@@ -69,7 +70,7 @@ class Game:
             if obj.type == "collision":
                 self.walls.append(pygame.Rect(obj.x, obj.y, obj.width, obj.height))
 
-        # dessiner le goupe de calques
+        # dessiner le groupe de calques
         self.group = pyscroll.PyscrollGroup(map_layer=self.map_layer, default_layer=4)
         self.group.add(self.player)
 
@@ -81,10 +82,10 @@ class Game:
         spawn_house_point = tmx_data.get_object_by_name('spawn_house1')
         self.player.position[0] = spawn_house_point.x
         self.player.position[1] = spawn_house_point.y - 20
-    
+
     def switch_world(self):
-         # charger la carte
-        tmx_data = pytmx.util_pygame.load_pygame("map.tmx")
+        # charger la carte
+        tmx_data = pytmx.util_pygame.load_pygame("maps/map.tmx")
         map_data = pyscroll.data.TiledMapData(tmx_data)
         self.map_layer = pyscroll.orthographic.BufferedRenderer(map_data, self.screen.get_size())
         self.map_layer.zoom = 2
@@ -96,7 +97,7 @@ class Game:
             if obj.type == "collision":
                 self.walls.append(pygame.Rect(obj.x, obj.y, obj.width, obj.height))
 
-        # dessiner le goupe de calques
+        # dessiner le groupe de calques
         self.group = pyscroll.PyscrollGroup(map_layer=self.map_layer, default_layer=4)
         self.group.add(self.player)
 
@@ -128,10 +129,10 @@ class Game:
     def run(self):
         running = True
         clock = pygame.time.Clock()
-        
+
         while running:
             self.player.save_location()
-            self.hundle_input()
+            self.handle_input()
             self.update()
             self.group.center(self.player.rect.center)
             self.group.draw(self.screen)
@@ -146,9 +147,9 @@ class Game:
                         width = 800
                     if height < 600:
                         height = 600
-                    self.screen = pygame.display.set_mode((width,height), locals.RESIZABLE)
+                    self.screen = pygame.display.set_mode((width, height), locals.RESIZABLE)
                     self.map_layer.set_size(self.screen.get_size())
 
             clock.tick(60)
-        
+
         pygame.quit()
