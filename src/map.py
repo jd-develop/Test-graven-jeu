@@ -5,6 +5,8 @@ import pygame
 import pyscroll
 import pytmx
 
+from src.player import NPC
+
 
 @dataclass
 class Portal:
@@ -21,6 +23,7 @@ class Map:
     group: pyscroll.PyscrollGroup
     tmx_data: pytmx.TiledMap
     portals: list[Portal]
+    NPCs: list[NPC]
 
 
 class MapManager:
@@ -48,6 +51,8 @@ class MapManager:
                 target_world='dungeon',
                 target_point='spawn'
             )
+        ], npcs=[
+            NPC("paul", nb_points=4)
         ])
         self.register_map("house", screen, player, portals=[
             Portal(
@@ -74,6 +79,7 @@ class MapManager:
             )
         ])
         self.teleport_player("Player")
+        self.teleport_npcs()
 
     def check_collisions(self):
         # portails
@@ -98,9 +104,11 @@ class MapManager:
         self.player.position[1] = point.y
         self.player.save_location()
 
-    def register_map(self, name, screen, player, portals: list[Portal] = None):
+    def register_map(self, name, screen, player, portals: list[Portal] = None, npcs: list[NPC] = None):
         if portals is None:
             portals = []
+        if npcs is None:
+            npcs = []
         # charger la carte
         tmx_data = pytmx.util_pygame.load_pygame(f"maps/{name}.tmx")
         map_data = pyscroll.data.TiledMapData(tmx_data)
@@ -118,7 +126,10 @@ class MapManager:
         group = pyscroll.PyscrollGroup(map_layer=self.map_layer, default_layer=5)
         group.add(player)
 
-        self.maps[name] = Map(name, walls, group, tmx_data, portals)
+        for npc in npcs:
+            group.add(npc)
+
+        self.maps[name] = Map(name, walls, group, tmx_data, portals, npcs)
 
     def change_screen_size(self, screen):
         # puisqu'on peut changer la taille de la fenêtre il faut mettre à jour la taille du map layer
@@ -139,6 +150,15 @@ class MapManager:
         else:
             return self.get_map().tmx_data.get_object_by_id(args[0])
 
+    def teleport_npcs(self):
+        for map_ in self.maps:
+            map_data = self.maps[map_]
+            npcs = map_data.NPCs
+
+            for npc in npcs:
+                npc.load_points(self)
+                npc.teleport_spawn()
+
     def draw(self, screen):
         self.get_grp().draw(screen)
         self.get_grp().center(self.player.rect.center)
@@ -146,3 +166,6 @@ class MapManager:
     def update(self):
         self.get_grp().update()
         self.check_collisions()
+
+        for npc in self.get_map().NPCs:
+            npc.move()
