@@ -5,6 +5,7 @@ from pygame import locals
 import pytmx
 import pyscroll
 from src.player import Player
+from src.map import MapManager as MapMgr
 
 
 class Game:
@@ -12,33 +13,9 @@ class Game:
         self.screen = pygame.display.set_mode((800, 600), locals.RESIZABLE)
         pygame.display.set_caption("Pygamon")
 
-        # charger la carte
-        tmx_data = pytmx.util_pygame.load_pygame("maps/map.tmx")
-        map_data = pyscroll.data.TiledMapData(tmx_data)
-        self.map_layer = pyscroll.orthographic.BufferedRenderer(map_data, self.screen.get_size())
-        self.map_layer.zoom = 2
-
         # générer un joueur
-        player_position = tmx_data.get_object_by_id(1)
-        self.player = Player(player_position.x, player_position.y)
-
-        # liste de collisions
-        self.walls = []
-
-        for obj in tmx_data.objects:
-            if obj.type == "collision":
-                self.walls.append(pygame.Rect(obj.x, obj.y, obj.width, obj.height))
-
-        # dessiner le groupe de calques
-        self.group = pyscroll.PyscrollGroup(map_layer=self.map_layer, default_layer=4)
-        self.group.add(self.player)
-
-        # rect de collision pour entrer dans house1
-        enter_house1 = tmx_data.get_object_by_name("enter_house1")
-        self.enter_house1_rect = pygame.Rect(enter_house1.x, enter_house1.y, enter_house1.width, enter_house1.height)
-        self.exit_house1_rect = None
-
-        self.map = "world"
+        self.player = Player(0, 0)
+        self.map_mgr = MapMgr(self.screen, self.player)
 
     def handle_input(self):
         pressed = pygame.key.get_pressed()
@@ -56,75 +33,8 @@ class Game:
             self.player.change_animation("left")
             self.player.move_left()
 
-    def switch_house(self):
-        # charger la carte
-        tmx_data = pytmx.util_pygame.load_pygame("maps/house1.tmx")
-        map_data = pyscroll.data.TiledMapData(tmx_data)
-        self.map_layer = pyscroll.orthographic.BufferedRenderer(map_data, self.screen.get_size())
-        self.map_layer.zoom = 2
-
-        # liste de collisions
-        self.walls = []
-
-        for obj in tmx_data.objects:
-            if obj.type == "collision":
-                self.walls.append(pygame.Rect(obj.x, obj.y, obj.width, obj.height))
-
-        # dessiner le groupe de calques
-        self.group = pyscroll.PyscrollGroup(map_layer=self.map_layer, default_layer=4)
-        self.group.add(self.player)
-
-        # rect de collision pour sortir de house1
-        exit_house1 = tmx_data.get_object_by_name("exit")
-        self.exit_house1_rect = pygame.Rect(exit_house1.x, exit_house1.y, exit_house1.width, exit_house1.height)
-
-        # récup pt de spawn dans la maison
-        spawn_house_point = tmx_data.get_object_by_name('spawn_house1')
-        self.player.position[0] = spawn_house_point.x
-        self.player.position[1] = spawn_house_point.y - 20
-
-    def switch_world(self):
-        # charger la carte
-        tmx_data = pytmx.util_pygame.load_pygame("maps/map.tmx")
-        map_data = pyscroll.data.TiledMapData(tmx_data)
-        self.map_layer = pyscroll.orthographic.BufferedRenderer(map_data, self.screen.get_size())
-        self.map_layer.zoom = 2
-
-        # liste de collisions
-        self.walls = []
-
-        for obj in tmx_data.objects:
-            if obj.type == "collision":
-                self.walls.append(pygame.Rect(obj.x, obj.y, obj.width, obj.height))
-
-        # dessiner le groupe de calques
-        self.group = pyscroll.PyscrollGroup(map_layer=self.map_layer, default_layer=4)
-        self.group.add(self.player)
-
-        # rect de collision pour entrer dans house1
-        enter_house1 = tmx_data.get_object_by_name("enter_house1")
-        self.enter_house1_rect = pygame.Rect(enter_house1.x, enter_house1.y, enter_house1.width, enter_house1.height)
-
-        # récup pt de spawn devant la maison
-        exit_spawn_house_point = tmx_data.get_object_by_name('exit_house1')
-        self.player.position[0] = exit_spawn_house_point.x
-        self.player.position[1] = exit_spawn_house_point.y + 20
-
     def update(self):
-        self.group.update()
-
-        # vérif entrée maison
-        if self.map == "world" and self.player.feet.colliderect(self.enter_house1_rect):
-            self.switch_house()
-            self.map = "house1"
-        if self.map == "house1" and self.player.feet.colliderect(self.exit_house1_rect):
-            self.switch_world()
-            self.map = "world"
-
-        # vérif collision
-        for sprite in self.group.sprites():
-            if sprite.feet.collidelist(self.walls) > -1:
-                sprite.move_back()
+        self.map_mgr.update()
 
     def run(self):
         running = True
@@ -134,8 +44,7 @@ class Game:
             self.player.save_location()
             self.handle_input()
             self.update()
-            self.group.center(self.player.rect.center)
-            self.group.draw(self.screen)
+            self.map_mgr.draw(self.screen)
             pygame.display.flip()
 
             for event in pygame.event.get():
@@ -148,7 +57,7 @@ class Game:
                     if height < 600:
                         height = 600
                     self.screen = pygame.display.set_mode((width, height), locals.RESIZABLE)
-                    self.map_layer.set_size(self.screen.get_size())
+                    self.map_mgr.change_screen_size(self.screen)
 
             clock.tick(60)
 

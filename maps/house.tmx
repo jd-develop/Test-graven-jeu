@@ -131,12 +131,12 @@
   <object id="11" type="collision" x="253" y="234.667" width="32" height="32"/>
   <object id="12" type="collision" x="15" y="31.5" width="354" height="48"/>
   <object id="13" type="collision" x="367.5" y="31" width="17" height="334.5"/>
-  <object id="14" type="collision" x="318.225" y="160" width="55.2752" height="45.6607"/>
+  <object id="14" type="collision" x="319.892" y="160" width="53.6085" height="45.6607"/>
   <object id="15" type="collision" x="271.5" y="32.5" width="16" height="95"/>
   <object id="16" type="collision" x="18.5" y="352" width="353.5" height="16.5"/>
   <object id="17" type="collision" x="15.5" y="60" width="16.5" height="297"/>
   <object id="18" name="exit" x="97.5" y="335.5" width="29.5" height="14.5"/>
-  <object id="19" name="spawn_house1" x="108.833" y="300.667">
+  <object id="19" name="spawn_house" x="189.881" y="294.737">
    <point/>
   </object>
  </objectgroup>
