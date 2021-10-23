@@ -34,7 +34,13 @@ class MapManager:
                 origin_world='world',
                 origin_point='enter_house',
                 target_world='house',
-                target_point='spawn_house'
+                target_point='spawn'
+            ),
+            Portal(
+                origin_world='world',
+                origin_point='enter_house2',
+                target_world='house2',
+                target_point='spawn'
             )
         ])
         self.register_map("house", screen, player, portals=[
@@ -43,6 +49,14 @@ class MapManager:
                 origin_point='exit',
                 target_world='world',
                 target_point='exit_house'
+            )
+        ])
+        self.register_map("house2", screen, player, portals=[
+            Portal(
+                origin_world='house2',
+                origin_point='exit',
+                target_world='world',
+                target_point='exit_house2'
             )
         ])
         self.teleport_player("Player")
