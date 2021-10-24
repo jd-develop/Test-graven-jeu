@@ -111,8 +111,8 @@ class NPC(Entity):
         self.position[1] = location.y
         self.save_location()
 
-    def load_points(self, map_):
+    def load_points(self, tmx_data):
         for num in range(1, self.nb_points + 1):
-            point = map_.get_object(f'{self.name}_path{num}')
+            point = tmx_data.get_object_by_name(f'{self.name}_path{num}')
             rect = pygame.Rect(point.x, point.y, point.width, point.height)
             self.points.append(rect)

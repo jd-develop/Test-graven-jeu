@@ -78,6 +78,8 @@ class MapManager:
                 target_world='world',
                 target_point='exit_dungeon'
             )
+        ], npcs=[
+            NPC("boss", nb_points=4)
         ])
         self.teleport_player("Player")
         self.teleport_npcs()
@@ -157,7 +159,7 @@ class MapManager:
             npcs = map_data.NPCs
 
             for npc in npcs:
-                npc.load_points(self)
+                npc.load_points(map_data.tmx_data)
                 npc.teleport_spawn()
 
     def draw(self, screen):
