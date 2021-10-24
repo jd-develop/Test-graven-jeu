@@ -52,7 +52,8 @@ class MapManager:
                 target_point='spawn'
             )
         ], npcs=[
-            NPC("paul", nb_points=4)
+            NPC("paul", nb_points=4),
+            NPC("robin", nb_points=2)
         ])
         self.register_map("house", screen, player, portals=[
             Portal(
@@ -89,7 +90,7 @@ class MapManager:
                 rect = pygame.Rect(point.x, point.y, point.width, point.height)
 
                 if self.player.feet.colliderect(rect):
-                    copy_portal = portal
+                    # copy_portal = portal
                     self.current_map = portal.target_world
                     self.teleport_player(portal.target_point)
 
