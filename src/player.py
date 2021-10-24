@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 # coding:utf-8
 import pygame
+from src.animation import AnimateSprite
 
 
-class Entity(pygame.sprite.Sprite):
+class Entity(AnimateSprite):
     def __init__(self, name, x, y):
-        super().__init__()
-        self.name = name
-        self.sprite_sheet = pygame.image.load(f"sprites/{name}.png")
+        super().__init__(name)
         self.image = self.get_image(0, 0)
         if name == 'player':
             self.image.set_colorkey([255, 0, 255])
@@ -15,24 +14,10 @@ class Entity(pygame.sprite.Sprite):
             self.image.set_colorkey([0, 0, 0])
         self.rect = self.image.get_rect()
         self.position = [x, y]
-        self.images = {
-            "down": self.get_image(0, 0),
-            "left": self.get_image(0, 32),
-            "right": self.get_image(0, 64),
-            "up": self.get_image(0, 96)
-        }
         self.feet = pygame.Rect(0, 0, self.rect.width / 2, 12)
         self.old_position = self.position.copy()
-        self.speed = 2
 
     def save_location(self): self.old_position = self.position.copy()
-
-    def change_animation(self, name):
-        self.image = self.images.get(name)
-        if self.name == 'player':
-            self.image.set_colorkey([255, 0, 255])
-        else:
-            self.image.set_colorkey([0, 0, 0])
     
     def move_right(self):
         self.position[0] += self.speed
@@ -58,15 +43,6 @@ class Entity(pygame.sprite.Sprite):
         self.position = self.old_position
         self.rect.topleft = self.position
         self.feet.midbottom = self.rect.midbottom
-
-    def get_image(self, x, y):
-        image = pygame.Surface([32, 32])
-        image.blit(self.sprite_sheet, (0, 0), (x, y, 32, 32))
-        if self.name == 'player':
-            image.set_colorkey([255, 0, 255])
-        else:
-            image.set_colorkey([0, 0, 0])
-        return image
 
 
 class Player(Entity):
