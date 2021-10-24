@@ -98,8 +98,18 @@ class MapManager:
 
         # collisions
         for sprite in self.get_group().sprites():
+
+            if type(sprite) == NPC:
+                if sprite.feet.colliderect(self.player.rect):
+                    sprite.speed = 0
+                else:
+                    sprite.speed = sprite.default_speed
+
             if sprite.feet.collidelist(self.get_walls()) > -1:
                 sprite.move_back()
+                sprite.speed = 0
+            else:
+                sprite.speed = sprite.default_speed
 
     def teleport_player(self, name):
         point = self.get_object(name)

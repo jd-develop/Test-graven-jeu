@@ -58,6 +58,7 @@ class NPC(Entity):
         self.points = []
         self.current_point = 0
         self.speed = 1
+        self.default_speed = self.speed
 
     def move(self):
         current_point = self.current_point

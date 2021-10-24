@@ -17,6 +17,7 @@ class AnimateSprite(pygame.sprite.Sprite):
             "up": self.get_images(96)
         }
         self.speed = 2
+        self.default_speed = self.speed
 
     def change_animation(self, name):
         self.image = self.images[name][self.animation_index]
