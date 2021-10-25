@@ -2,8 +2,8 @@
 # coding:utf-8
 import pygame
 from pygame import locals
-import pytmx
-import pyscroll
+
+from src.dialog import DialogBox
 from src.player import Player
 from src.map import MapManager as MapMgr
 
@@ -16,6 +16,7 @@ class Game:
         # générer un joueur
         self.player = Player()
         self.map_mgr = MapMgr(self.screen, self.player)
+        self.dialog_box = DialogBox(self.screen)
 
     def handle_input(self):
         pressed = pygame.key.get_pressed()
@@ -41,19 +42,26 @@ class Game:
             self.handle_input()
             self.update()
             self.map_mgr.draw(self.screen)
+            self.dialog_box.render(self.screen)
             pygame.display.flip()
 
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                elif event.type == locals.VIDEORESIZE:
-                    width, height = event.size
-                    if width < 800:
-                        width = 800
-                    if height < 600:
-                        height = 600
-                    self.screen = pygame.display.set_mode((width, height), locals.RESIZABLE)
-                    self.map_mgr.change_screen_size(self.screen)
+                match event.type:
+                    case pygame.QUIT:
+                        running = False
+                    case pygame.KEYDOWN:
+                        match event.key:
+                            case pygame.K_SPACE:
+                                self.map_mgr.check_npc_collisions(self.dialog_box)
+                    case locals.VIDEORESIZE:
+                        width, height = event.size
+                        if width < 800:
+                            width = 800
+                        if height < 600:
+                            height = 600
+                        self.screen = pygame.display.set_mode((width, height), locals.RESIZABLE)
+                        self.map_mgr.change_screen_size(self.screen)
+                        self.dialog_box.change_screen_size(self.screen)
 
             clock.tick(60)
 

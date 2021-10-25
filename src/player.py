@@ -51,8 +51,11 @@ class Player(Entity):
 
 
 class NPC(Entity):
-    def __init__(self, name, nb_points):
+    def __init__(self, name, nb_points, dialog: list[str] = None):
         super().__init__(name, 0, 0)
+        if dialog is None:
+            dialog = ["Le temps est beau aujourd'hui"]
+        self.dialog = dialog
         self.name = name
         self.nb_points = nb_points
         self.points = []
