@@ -6,7 +6,7 @@ import pyscroll
 import pytmx
 
 from src.dialog import DialogBox
-from src.player import NPC, Entity
+from src.entity import NPC, Entity
 
 
 @dataclass
@@ -56,7 +56,7 @@ class MapManager:
             NPC("paul", nb_points=4, dialog=[
                 "Bonjour jeune aventurier !",
                 "Le temps est beau aujourd'hui.",
-                "Pourrais-tu aller me chercher quelques diamants...", "...dans le donjon ?",
+                "Pourrais-tu aller me chercher quelques diamants dans le donjon ?",
                 "Merci, je te revaudrai ça."
             ]),
             NPC("robin", nb_points=2, dialog=["Bonjour ! Comment va-tu ?"])
@@ -191,12 +191,17 @@ class MapManager:
         for npc in self.get_map().NPCs:
             npc.move()
 
-    def check_npc_collisions(self, dialog_box: DialogBox):
+    def check_npc_collisions(self, dialog_box: DialogBox) -> bool:
         for sprite in self.get_sprites():
             if sprite.feet.colliderect(self.player.rect) and type(sprite) is NPC:
                 dialog_box.execute(sprite.dialog)
+                return True
+        return False
 
-    def check_sign_collisions(self, dialog_box: DialogBox):
+    def check_sign_collisions(self, dialog_box: DialogBox) -> bool:
         for obj in self.get_map().tmx_data.objects:
             if obj.name == 'sign' and pygame.Rect(obj.x, obj.y, obj.width, obj.height).colliderect(self.player.rect):
-                dialog_box.execute(["Parlez aux PNJ en appuyant sur espace..."])
+                dialog_box.execute(["Parlez aux PNJ en appuyant sur espace.", "Partez visiter les maisons !",
+                                    "Aventurez-vous dans le donjon, mais prenez garde au boss !"])
+                return True
+        return False

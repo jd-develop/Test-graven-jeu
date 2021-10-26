@@ -21,10 +21,7 @@ class AnimateSprite(pygame.sprite.Sprite):
 
     def change_animation(self, name):
         self.image = self.images[name][self.animation_index]
-        if self.name == 'player':
-            self.image.set_colorkey([255, 0, 255])
-        else:
-            self.image.set_colorkey([0, 0, 0])
+        self.image.set_colorkey([255, 0, 255])
         self.clock += self.speed * 8
 
         if self.clock >= 100:
@@ -47,8 +44,5 @@ class AnimateSprite(pygame.sprite.Sprite):
     def get_image(self, x, y):
         image = pygame.Surface([32, 32])
         image.blit(self.sprite_sheet, (0, 0), (x, y, 32, 32))
-        if self.name == 'player':
-            image.set_colorkey([255, 0, 255])
-        else:
-            image.set_colorkey([0, 0, 0])
+        image.set_colorkey([255, 0, 255])
         return image

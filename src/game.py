@@ -4,7 +4,7 @@ import pygame
 from pygame import locals
 
 from src.dialog import DialogBox
-from src.player import Player
+from src.entity import Player
 from src.map import MapManager as MapMgr
 
 
@@ -52,8 +52,10 @@ class Game:
                     case pygame.KEYDOWN:
                         match event.key:
                             case pygame.K_SPACE:
-                                self.map_mgr.check_npc_collisions(self.dialog_box)
-                                self.map_mgr.check_sign_collisions(self.dialog_box)
+                                if not self.map_mgr.check_npc_collisions(self.dialog_box)\
+                                  and not self.map_mgr.check_sign_collisions(self.dialog_box):
+                                    self.dialog_box.reading = False
+                                    self.dialog_box.letter_index = 0
                     case locals.VIDEORESIZE:
                         width, height = event.size
                         if width < 800:
