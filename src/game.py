@@ -53,6 +53,7 @@ class Game:
                         match event.key:
                             case pygame.K_SPACE:
                                 self.map_mgr.check_npc_collisions(self.dialog_box)
+                                self.map_mgr.check_sign_collisions(self.dialog_box)
                     case locals.VIDEORESIZE:
                         width, height = event.size
                         if width < 800:

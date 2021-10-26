@@ -195,3 +195,8 @@ class MapManager:
         for sprite in self.get_sprites():
             if sprite.feet.colliderect(self.player.rect) and type(sprite) is NPC:
                 dialog_box.execute(sprite.dialog)
+
+    def check_sign_collisions(self, dialog_box: DialogBox):
+        for obj in self.get_map().tmx_data.objects:
+            if obj.name == 'sign' and pygame.Rect(obj.x, obj.y, obj.width, obj.height).colliderect(self.player.rect):
+                dialog_box.execute(["Parlez aux PNJ en appuyant sur espace..."])

@@ -456,7 +456,7 @@
   <object id="16" type="collision" x="602.5" y="160.5" width="12" height="10.75"/>
   <object id="17" type="collision" x="586.727" y="512.364" width="10.9091" height="11.2727"/>
   <object id="18" type="collision" x="522" y="608.5" width="12" height="9.75"/>
-  <object id="22" type="collision" x="212.25" y="214.25" width="22.5" height="19.75"/>
+  <object id="22" name="sign" type="collision" x="212.25" y="214.25" width="22.5" height="19.75"/>
   <object id="24" type="collision" x="179" y="182" width="25.25" height="22"/>
   <object id="26" type="collision" x="248" y="55" width="18.3333" height="20.6667"/>
   <object id="27" type="collision" x="356.333" y="103.667" width="21.6667" height="20.6667"/>
